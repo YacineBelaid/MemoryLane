@@ -1,5 +1,3 @@
-// routes/friendshipRoutes.js
-
 import express from 'express';
 import { verifyToken } from '../utils/tokenUtils.js';
 import {

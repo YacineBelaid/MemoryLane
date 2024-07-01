@@ -31,7 +31,6 @@ export function Navigation() {
       console.log('Login Failed: No credential received');
     }
   }
-
   const NavbarTheme = getTheme("NavbarTheme")
   const DropdownTheme = getTheme("DropdownTheme")
   return (

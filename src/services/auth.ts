@@ -26,7 +26,6 @@ export const useLoginWithGoogle = () => {
   return useMutation<LoginResponse, Error, string>({
     mutationFn: loginWithGoogle,
     onSuccess: (data) => {
-      // You can handle successful login here if needed
       localStorage.setItem('user-storage', JSON.stringify(data.user));
     },
     onError: (error) => {
@@ -36,8 +35,5 @@ export const useLoginWithGoogle = () => {
 };
 
 export const logout = async (): Promise<void> => {
-  // If you implement a server-side logout, you can call it here
-  // await axiosInstance.post('/logout');
-  
   localStorage.removeItem('user-storage');
 };

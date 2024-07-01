@@ -69,3 +69,25 @@ export async function removeDeleteTag(key) {
     throw error;
   }
 }
+export async function addDeleteTagToS3Object(bucketName, key) {
+  const command = new PutObjectTaggingCommand({
+    Bucket: bucketName,
+    Key: key,
+    Tagging: { TagSet: [{ Key: "DeleteIn24Hours", Value: "true" }] },
+  });
+
+  try {
+    await s3Client.send(command);
+    console.log(`Delete tag added successfully to: ${key}`);
+    return true; 
+  } catch (error) {
+    if (error.name === 'NoSuchKey') {
+      console.log(`Object ${key} not found in bucket ${bucketName}. It may have been already deleted.`);
+      return false; 
+    } else {
+      console.error("Error adding delete tag to S3 object:", error);
+      throw error;
+    }
+  }
+}
+

@@ -1,18 +1,44 @@
-
 "use client";
 
+import { useState } from "react";
 import useUserStore from "./../../store/useStore";
 import { Button, Modal } from "flowbite-react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { deleteMemory } from "./../../services/memory.service"
 
 export function MemoryDelete() {
   const {
-    openMemmoryDeleteModal,
-    setopenMemmoryDeleteModal,
-  } = useUserStore()
+    openMemoryDeleteModal,
+    setopenMemoryDeleteModal,
+    memoryToDeleteId,
+    setMemoryToDeleteId,
+  } = useUserStore();
+
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!memoryToDeleteId) return;
+
+    setIsDeleting(true);
+    try {
+      await deleteMemory(memoryToDeleteId);
+      setopenMemoryDeleteModal(false);
+      setMemoryToDeleteId(null);
+    } catch (error) {
+      console.error("Error deleting memory:", error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <>
-      <Modal show={openMemmoryDeleteModal} size="md" onClose={() => setopenMemmoryDeleteModal(false)} popup>
+      <Modal 
+        show={openMemoryDeleteModal} 
+        size="md" 
+        onClose={() => setopenMemoryDeleteModal(false)} 
+        popup
+      >
         <Modal.Header />
         <Modal.Body>
           <div className="text-center">
@@ -21,10 +47,18 @@ export function MemoryDelete() {
               Are you sure you want to delete this Memory?
             </h3>
             <div className="flex justify-center gap-4">
-              <Button color="failure" onClick={() => setopenMemmoryDeleteModal(false)}>
-                {"Yes, I'm sure"}
+              <Button 
+                color="failure" 
+                onClick={handleDelete}
+                disabled={isDeleting}
+              >
+                {isDeleting ? "Deleting..." : "Yes, I'm sure"}
               </Button>
-              <Button color="gray" onClick={() => setopenMemmoryDeleteModal(false)}>
+              <Button 
+                color="gray" 
+                onClick={() => setopenMemoryDeleteModal(false)}
+                disabled={isDeleting}
+              >
                 No, cancel
               </Button>
             </div>

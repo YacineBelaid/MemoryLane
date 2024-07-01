@@ -1,5 +1,3 @@
-// utils/dateFormatter.js
-
 function getOrdinalSuffix(day) {
     if (day > 3 && day < 21) return 'th';
     switch (day % 10) {

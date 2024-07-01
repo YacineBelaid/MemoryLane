@@ -1,10 +1,13 @@
 
 export interface CreateMemoryData {
+    id : string | undefined;
     name: string;
     description: string;
+    date: Date;
+    timestamp: Date;
     isPublic: boolean;
     friendIds: number[];
-    filetype?: string;
+    fileType?: string | undefined;
     file?: File | null;
   }
   export interface Memory{
@@ -14,7 +17,7 @@ export interface CreateMemoryData {
     description:string,
     timestamp: Date,
     is_public:boolean,
-    picture_url:string,
+    picture_url:string | null,
     file_id:string,
     created_at: Date,
   }
@@ -27,6 +30,15 @@ export interface CreateMemoryData {
     lastFetchedDate?: Date | null;
   }
 
- 
-
+  export interface EditMemoryData {
+    id: string
+    name: string
+    description: string
+    timestamp: Date
+    date: Date
+    isPublic: boolean
+    friendIds: string[]
+    file?: File | null
+  }
+  
   

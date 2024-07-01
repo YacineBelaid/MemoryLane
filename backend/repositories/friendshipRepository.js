@@ -1,5 +1,3 @@
-// repositories/friendshipRepository.js
-
 import db from '../config/database.js';
 
 export const getConfirmedFriendships = (userId) => {

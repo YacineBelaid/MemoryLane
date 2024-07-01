@@ -1,7 +1,7 @@
-// src/store/userStore.ts
 import { create } from 'zustand'
-import { UserState } from '../interfaces/user.interface'
+import { User, UserState } from '../interfaces/user.interface'
 import { persist } from 'zustand/middleware'
+import { Memory } from '@/interfaces/memory.inteface'
 
 const useUserStore = create<UserState>()(
   persist(
@@ -13,14 +13,18 @@ const useUserStore = create<UserState>()(
       profileSettings: false,
       memoryModal: false,
       openfriendDeleteModal: false,
-      openMemmoryDeleteModal: false,
-      setopenMemmoryDeleteModal: (openMemmoryDeleteModal) => set({ openMemmoryDeleteModal }),
-      setopenFriendDeleteModal: (openfriendDeleteModal) => set({ openfriendDeleteModal }),
-      setMemoryModal: (memoryModal) => set({ memoryModal }),
-      setProfileSettings: (profileSettings) => set({ profileSettings }),
-      setOpenModal: (openModal) => set({ openModal }),
-      setIsAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
-      login: (token, user) => set({ token, user, isAuthenticated: true }),
+      openMemoryDeleteModal: false,
+      memoryToEdit: null,
+      memoryToDeleteId: null,
+      setMemoryToEdit: (memory: Memory | null) => set({ memoryToEdit: memory }),
+      setMemoryToDeleteId: (id: string | null) => set({ memoryToDeleteId: id }),
+      setopenMemoryDeleteModal: (openMemoryDeleteModal: boolean) => set({ openMemoryDeleteModal }),
+      setopenFriendDeleteModal: (openfriendDeleteModal: boolean) => set({ openfriendDeleteModal }),
+      setMemoryModal: (memoryModal: boolean) => set({ memoryModal }),
+      setProfileSettings: (profileSettings: boolean) => set({ profileSettings }),
+      setOpenModal: (openModal: boolean) => set({ openModal }),
+      setIsAuthenticated: (isAuthenticated: boolean) => set({ isAuthenticated }),
+      login: (token: string, user: User) => set({ token, user, isAuthenticated: true }),
       logout: () => set({ user: null, token: null, isAuthenticated: false }),
     }),
     {

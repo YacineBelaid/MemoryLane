@@ -1,12 +1,35 @@
 import { Memory } from '@/interfaces/memory.inteface'
 import { useUserPictureAndNameById } from './../services/user.service'
 import { Dropdown } from 'flowbite-react'
-export function MemoryCard({ memory }: { memory: Memory }) {
+import { DropdownTheme } from '../theme/dropdown';
+import { User } from '@/interfaces/user.interface';
+import useUserStore from './../store/useStore';
+export function MemoryCard({ memory, currentUser }: { memory: Memory; currentUser: User | null }) {
+
+
+  const {
+    setMemoryModal,
+    setMemoryToEdit,
+    setopenMemoryDeleteModal,
+    setMemoryToDeleteId
+  } = useUserStore()
+  
   const {
     data: userInfo,
     isLoading,
     error,
   } = useUserPictureAndNameById(memory.user_id, {})
+
+  const handleEdit = () => {
+    setMemoryToEdit(memory)
+    setMemoryModal(true)
+  }
+  
+
+  const handleDelete = () => {
+    setMemoryToDeleteId(memory.id)
+    setopenMemoryDeleteModal(true)
+  }
 
   function getOrdinalSuffix(day: number) {
     if (day > 3 && day < 21) return 'th'
@@ -32,17 +55,24 @@ export function MemoryCard({ memory }: { memory: Memory }) {
 
   if (isLoading) return <div>Loading user info...</div>
   if (error) return <div>Error loading user info</div>
+  
+  const isCurrentUserAuthor = memory.user_id === currentUser?.id;
 
   return (
     <figure className='rounded-2xl bg-gray-800 p-6 shadow-lg ring-1 ring-gray-900/5'>
-      <div className='right-0'>
-      <Dropdown label='Settings' inline>
-        <Dropdown.Item>Edit</Dropdown.Item>
-        <Dropdown.Item>Delete</Dropdown.Item>
+      <img className="mb-3" src={memory.picture_url}></img>
+      <div className='flex justify-between items-start mb-2'>
+        <p className='text-xl font-semibold text-white'>{memory.name}</p>
+        {isCurrentUserAuthor && (
+        <Dropdown theme={DropdownTheme} label='Settings' inline>
+        <Dropdown.Item onClick={handleEdit}>Edit</Dropdown.Item>
+        <Dropdown.Item onClick={handleDelete}>Delete</Dropdown.Item>
       </Dropdown>
+      
+          )}
       </div>
-      <img src={memory.picture_url}></img>
-      <p className='text-xl font-semibold italic text-white'>{memory.name}</p>
+      
+      <p className='text-xs font-semibold text-gray-300'>From {formatDate(new Date(memory.timestamp))}</p>,
       <blockquote className='text-white'>
         <p>"{memory.description}"</p>
       </blockquote>
@@ -56,8 +86,8 @@ export function MemoryCard({ memory }: { memory: Memory }) {
           <div className='font-semibold text-gray-50'>
             {userInfo?.name || 'Unknown User'}
           </div>
-          <div className='text-gray-200'>
-            {formatDate(new Date(memory.timestamp))}
+          <div className='text-gray-200 italic'>
+          Posted on {formatDate(new Date(memory.created_at))}
           </div>
         </div>
       </figcaption>

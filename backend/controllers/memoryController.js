@@ -1,21 +1,20 @@
-// controllers/memoryController.js
-
 import {
   createMemory,
   getMemories, 
   getMemoryById,
   updateMemory,
-  deleteMemory
+  deleteMemory,
+  updateMemoryParticipants,
 } from '../repositories/memoryRepository.js';
 
-import { getPresignedUrl, removeDeleteTag, deleteFileFromS3 } from './../utils/s3upload.js';
-import { createFile, updateFile, deleteFile, getFileById } from './../repositories/fileRepository.js';
+import { getPresignedUrl, removeDeleteTag,addDeleteTagToS3Object  } from './../utils/s3upload.js';
+import { createFile, updateFile } from './../repositories/fileRepository.js';
 import dotenv from 'dotenv'
 
 dotenv.config()
 
 export const createMemoryController = async (req, res) => {
-  const { name, description, friendIds, isPublic, fileType, } = req.body;
+  const { name, description,timestamp, friendIds, isPublic, fileType, } = req.body;
   const authorId = req.userId;
   try {
     if (fileType) {
@@ -28,7 +27,7 @@ export const createMemoryController = async (req, res) => {
       });
     }
 
-    const memoryId = await createMemory(authorId, name, description, friendIds, isPublic);
+    const memoryId = await createMemory(authorId, name,description, timestamp, friendIds, isPublic);
     res.status(201).json({ message: 'Memory created successfully', memoryId });
   } catch (error) {
     console.error('Error in createMemoryController:', error);
@@ -37,36 +36,49 @@ export const createMemoryController = async (req, res) => {
 };
 
 export const confirmUploadAndCreateMemoryController = async (req, res) => {
-  const { name, description, friendIds, isPublic, key, fileId, publicUrl } = req.body;
+  const { name, description,timestamp, friendIds, isPublic, key, fileId, publicUrl } = req.body;
   const authorId = req.userId;
   try {
     await removeDeleteTag(key);
     const dbFileId = await createFile(process.env.S3_BUCKET_NAME, key, fileId, publicUrl);
-    const memoryId = await createMemory(authorId, name, description, friendIds, isPublic, publicUrl, dbFileId);
+    const memoryId = await createMemory(authorId, name, description,timestamp, friendIds, isPublic, publicUrl, dbFileId);
     res.status(201).json({ message: 'Memory created successfully with uploaded file', memoryId });
   } catch (error) {
     console.error('Error in confirmUploadAndCreateMemoryController:', error);
     res.status(500).json({ error: 'Failed to confirm upload and create memory' });
   }
 };
-
 export const updateMemoryController = async (req, res) => {
   const { id } = req.params;
-  const { name, description, isPublic, fileType } = req.body;
+  const { name, description, isPublic, fileType, timestamp } = req.body;
   const userId = req.userId;
 
   try {
-    if (fileType) {
-      const { signedUrl, fileId: s3FileId, key } = await getPresignedUrl(fileType);
-      return res.status(200).json({ 
-        message: 'Presigned URL generated for update',
-        uploadUrl: signedUrl,
-        fileId: s3FileId,
-        key
-      });
+    const memory = await getMemoryById(id, userId);
+    let memoryUpdate = { name, description, is_public: isPublic, timestamp };
+
+    if (fileType !== undefined) {
+      if (fileType === null) {
+        if (memory.picture_url) {
+          const key = memory.picture_url.split('/').pop(); 
+          await addDeleteTagToS3Object(process.env.S3_BUCKET_NAME, key);
+          memoryUpdate.picture_url = null;
+        }
+      } else {
+        const { signedUrl, fileId, key } = await getPresignedUrl(fileType);
+        memoryUpdate.picture_url = `https://${process.env.S3_BUCKET_NAME}.s3.amazonaws.com/${key}`;
+        
+        return res.status(200).json({ 
+          message: 'Memory updated and presigned URL generated for file update',
+          uploadUrl: signedUrl,
+          fileId,
+          key,
+          updateResult: await updateMemory(id, userId, memoryUpdate)
+        });
+      }
     }
 
-    const result = await updateMemory(id, userId, { name, description, isPublic });
+    const result = await updateMemory(id, userId, memoryUpdate);
     res.json(result);
   } catch (error) {
     console.error('Error in updateMemoryController:', error);
@@ -74,21 +86,41 @@ export const updateMemoryController = async (req, res) => {
   }
 };
 
+
 export const confirmUploadAndUpdateMemoryController = async (req, res) => {
   const { id } = req.params;
-  const { name, description, isPublic, key, fileId, publicUrl } = req.body;
+  const { name, description, timestamp, isPublic, friendIds, key, fileId, publicUrl } = req.body;
   const userId = req.userId;
 
   try {
-    await removeDeleteTag(key);
     const memory = await getMemoryById(id, userId);
-    if (memory.file_id) {
-      await updateFile(memory.file_id, fileId, null, publicUrl, null, null);
-    } else {
-      const dbFileId = await createFile(process.env.S3_BUCKET_NAME, key, fileId, publicUrl);
-      await updateMemory(id, userId, { file_id: dbFileId });
+    
+    if (key) {
+      await removeDeleteTag(key);
     }
-    const result = await updateMemory(id, userId, { name, description, isPublic, picture_url: publicUrl });
+
+    let updatedFileId = memory.file_id;
+    if (fileId) {
+      if (memory.file_id) {
+        await updateFile(memory.file_id, fileId, null, publicUrl, null, null);
+      } else {
+        updatedFileId = await createFile(process.env.S3_BUCKET_NAME, key, fileId, publicUrl);
+      }
+    }
+
+    const result = await updateMemory(id, userId, { 
+      name, 
+      description, 
+      timestamp, 
+      is_public: isPublic, 
+      picture_url: publicUrl || memory.picture_url,
+      file_id: updatedFileId
+    });
+
+    if (friendIds && Array.isArray(friendIds)) {
+      await updateMemoryParticipants(id, userId, friendIds);
+    }
+
     res.json(result);
   } catch (error) {
     console.error('Error in confirmUploadAndUpdateMemoryController:', error);
@@ -96,22 +128,28 @@ export const confirmUploadAndUpdateMemoryController = async (req, res) => {
   }
 };
 
+
 export const deleteMemoryController = async (req, res) => {
   const { id } = req.params;
   const userId = req.userId;
 
   try {
     const memory = await getMemoryById(id, userId);
-    if (memory.file_id) {
-      const file = await getFileById(memory.file_id);
-      await deleteFileFromS3(file.bucket_id, file.file_id);
-      await deleteFile(file.id);      
+    
+    if (memory.picture_url) {
+      const fileKey = memory.picture_url.split('/').pop();
+      await addDeleteTagToS3Object(process.env.S3_BUCKET_NAME, fileKey);
     }
+
     const result = await deleteMemory(id, userId);
     res.json(result);
   } catch (error) {
     console.error('Error in deleteMemoryController:', error);
-    res.status(500).json({ error: 'Failed to delete memory' });
+    if (error.message === 'Memory not found or access denied') {
+      res.status(404).json({ error: error.message });
+    } else {
+      res.status(500).json({ error: 'Failed to delete memory' });
+    }
   }
 };
   

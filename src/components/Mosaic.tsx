@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { getMemories } from './../services/memory.service';
 import { Memory } from '@/interfaces/memory.inteface';
 import {MemoryCard} from './MemoryCard';
+import  useUserStore  from './../store/useStore';
+import { MemoryDelete } from './Modals/MemoryDeleteModal';
 function getOrdinalSuffix(day: number) {
   if (day > 3 && day < 21) return 'th'
   switch (day % 10) {
@@ -36,7 +38,8 @@ export default function Mosaic({ maxHeight = '80vh' }) {
     queryKey: ['publicMemories'],
     queryFn: () => getMemories({ queryType: 'public' }),
   });
-
+  const {user} = useUserStore()
+  console.log(user)
   const updateScrollInfo = () => {
     if (scrollContainerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } =
@@ -50,7 +53,7 @@ export default function Mosaic({ maxHeight = '80vh' }) {
       if(queryType === 'public')
         new Date(memory.created_at)
       })
-      const sortedDates = allDates.sort((a, b) => b.getTime() - a.getTime())
+      const sortedDates = allDates.sort((a: { getTime: () => number; }, b: { getTime: () => number; }) => b.getTime() - a.getTime())
       const dateIndex = Math.floor(
         newScrollPercentage * (sortedDates.length - 1)
       )
@@ -114,7 +117,7 @@ export default function Mosaic({ maxHeight = '80vh' }) {
           style={{ direction: 'ltr' }}
         >
           {publicMemories?.map((memory : Memory) => (
-            <MemoryCard key={memory.id} memory={memory} />
+            <MemoryCard key={memory.id} memory={memory} currentUser={user} />
           ))}
         </div>
       </div>
@@ -132,6 +135,7 @@ export default function Mosaic({ maxHeight = '80vh' }) {
         {currentDate}
       </div>
     )}
+    <MemoryDelete/>
   </div>
 )
 }

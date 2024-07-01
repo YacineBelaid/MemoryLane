@@ -60,7 +60,6 @@ export const authenticate = async (req, res) => {
   }
 };
 
-// Add a logout function
 export const logout = (req, res) => {
   res.clearCookie('token');
   res.json({ message: 'Logged out successfully' });

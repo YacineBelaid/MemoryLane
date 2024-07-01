@@ -1,5 +1,3 @@
-// controllers/friendshipController.js
-
 import {
     getConfirmedFriendships,
     getPendingFriendships,
@@ -47,7 +45,7 @@ import {
   export const handleFriendshipActionController = async (req, res) => {
     const userId = req.userId;
     const { friendshipId } = req.params;
-    const { action } = req.body; // 'confirm' or 'reject'
+    const { action } = req.body; 
   
     if (!['confirm', 'reject'].includes(action)) {
       return res.status(400).json({ error: 'Invalid action. Must be "confirm" or "reject".' });

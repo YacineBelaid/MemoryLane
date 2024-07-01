@@ -1,12 +1,9 @@
-// src/services/memoryService.ts
-
 import { fetchWithCredentials } from './utils/fetch.utils'
-import { CreateMemoryData,MemoryQueryParams } from './../interfaces/memory.inteface'
+import { CreateMemoryData,MemoryQueryParams,EditMemoryData } from './../interfaces/memory.inteface'
 const API_URL = import.meta.env.VITE_API_URL
 const BUCKET_NAME = import.meta.env.VITE_S3_BUCKET_NAME
 export async function createMemory(data: CreateMemoryData) {
-  if (data.filetype) {
-      // Step 1: Get presigned URL
+  if (data.fileType) {
        const {uploadUrl, fileId, key } = await fetchWithCredentials(
         `${API_URL}/memories`,
         {
@@ -15,27 +12,27 @@ export async function createMemory(data: CreateMemoryData) {
             name: data.name,
             description: data.description,
             friendIds: data.friendIds,
+            timestamp: data.date,
             isPublic: data.isPublic,
-            fileType: data.filetype,
+            fileType: data.fileType,
             file: data.file,
           },
         }
       )
     
-      // Step 2: Upload file to S3
       await fetch(uploadUrl, {
         method: 'PUT',
         body: data.file,
         headers: {
-          'Content-Type': data.filetype,
+          'Content-Type': data.fileType,
         },
       })
-      // Step 3: Confirm upload and create memory
       return fetchWithCredentials(`${API_URL}/memories/confirm`, {
         method: 'POST',
         body: ({
           name: data.name,
           description: data.description,
+          timestamp: data.date,
           isPublic: data.isPublic,
           friendIds: data.friendIds,
           key,
@@ -45,7 +42,6 @@ export async function createMemory(data: CreateMemoryData) {
       })
     
   } else {
-    // Create memory without file
     return fetchWithCredentials(`${API_URL}/memories`, {
       method: 'POST',
       body: data,
@@ -81,3 +77,60 @@ export async function getMemories({
        }
     );
   }
+
+  export async function editMemory(data: EditMemoryData) {
+    const baseBody = {
+      name: data.name,
+      description: data.description,
+      timestamp: data.date.toISOString(),
+      isPublic: data.isPublic,
+      friendIds: data.friendIds,
+    };
+  
+    if (data.file !== undefined) {
+      const { uploadUrl, fileId, key } = await fetchWithCredentials(
+        `${API_URL}/memories/${data.id}`,
+        {
+          method: 'PUT',
+          body: {
+            ...baseBody,
+            fileType: data.file ? data.file.type : null,
+          },
+        }
+      );
+  
+      if (data.file) {
+        await fetch(uploadUrl, {
+          method: 'PUT',
+          body: data.file,
+          headers: {
+            'Content-Type': data.file.type,
+          },
+        });
+      }
+  
+      return fetchWithCredentials(`${API_URL}/memories/${data.id}/confirm`, {
+        method: 'PUT',
+        body: {
+          ...baseBody,
+          key,
+          fileId,
+          publicUrl: data.file ? `https://${BUCKET_NAME}.s3.amazonaws.com/${key}` : null,
+        },
+      });
+    } else {
+      return fetchWithCredentials(`${API_URL}/memories/${data.id}`, {
+        method: 'PUT',
+        body: baseBody,
+      });
+    }
+  }
+  
+
+export async function deleteMemory(id: string) {
+  return fetchWithCredentials(`${API_URL}/memories/${id}`, {
+    method: 'DELETE',
+    body:undefined,
+  });
+}
+

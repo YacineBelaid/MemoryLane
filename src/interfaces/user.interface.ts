@@ -1,3 +1,5 @@
+import { Memory } from "./memory.inteface";
+
 export interface User {
     id: string;
     name: string;
@@ -12,9 +14,13 @@ export interface UserState {
     openModal: boolean
     profileSettings: boolean
     memoryModal:boolean
-    openMemmoryDeleteModal:boolean
     openfriendDeleteModal:boolean
-    setopenMemmoryDeleteModal: (openfriendDeleteModal: boolean) => void
+    openMemoryDeleteModal: boolean,
+    memoryToEdit: Memory | null
+    memoryToDeleteId: string | null
+    setMemoryToEdit: (memory: Memory | null) => void
+    setMemoryToDeleteId: (id: string | null) => void
+    setopenMemoryDeleteModal: (openMemmoryDeleteModal: boolean) => void
     setopenFriendDeleteModal: (openfriendDeleteModal: boolean) => void
     setMemoryModal: (memoryModal: boolean) => void
     setProfileSettings: (profileSettings: boolean) => void
