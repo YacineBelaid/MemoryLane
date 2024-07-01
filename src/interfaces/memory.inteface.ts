@@ -22,13 +22,17 @@ export interface CreateMemoryData {
     created_at: Date,
   }
 
+  export type QueryType = 'public' | 'feed' | 'user_public' | 'user_shared' | 'user_all' | 'friend_all_feed';
+  export type SortBy =  'latest' | 'oldest' | 'latest_date' | 'oldest_date';
+  
   export interface MemoryQueryParams {
-    queryType: 'public' | 'feed' | 'user_public' | 'user_shared' | 'user_all';
+    queryType: QueryType
     targetUserId?: string;
-    sortBy?: 'latest' | 'oldest' | 'latest_date' | 'oldest_date';
+    sortBy?:SortBy;
     limit?: number;
     lastFetchedDate?: Date | null;
   }
+  
 
   export interface EditMemoryData {
     id: string
@@ -41,4 +45,6 @@ export interface CreateMemoryData {
     file?: File | null
   }
   
+
+
   

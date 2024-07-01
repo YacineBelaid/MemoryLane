@@ -175,6 +175,9 @@ export const getMemoriesController = async (req, res) => {
       case 'user_all':
         memories = await getMemories('user_all', userId, null, sortBy, parseInt(limit), lastFetchedDate);
         break;
+        case 'friend_all_feed':
+          memories = await getMemories('friend_all_feed', userId, null, sortBy, parseInt(limit), lastFetchedDate);
+          break;
       default:
         return res.status(400).json({ error: 'Invalid query type' });
     }

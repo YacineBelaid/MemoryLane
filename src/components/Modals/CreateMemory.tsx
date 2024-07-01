@@ -15,7 +15,7 @@ import { ChangeEvent, useState, useEffect } from 'react'
 import { getTheme } from '../../theme/themeUtils'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createMemory, editMemory } from './../../services/memory.service'
-import { CreateMemoryData, Memory } from '@/interfaces/memory.inteface'
+import { CreateMemoryData } from '@/interfaces/memory.inteface'
 
 export function CreateMemory() {
   const modal = getTheme('createMemory')
