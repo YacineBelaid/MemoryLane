@@ -1,46 +1,18 @@
 'use client'
 
-import { Button, CustomFlowbiteTheme, Modal } from 'flowbite-react'
+import { Button, Modal } from 'flowbite-react'
 import { FloatingLabel } from 'flowbite-react'
-import useUserStore from '../store/useStore'
+import useUserStore from '../../store/useStore'
 import { Avatar } from 'flowbite-react'
+import { getTheme } from '../../theme/themeUtils';
 export function ProfileSettingsModal() {
   const {
-    userName,
-    userEmail,
-    userPicture,
-    setUserPicture,
+    user,
     profileSettings,
     setProfileSettings,
   } = useUserStore()
-  const button: CustomFlowbiteTheme['floatingLabel'] = {
-    input: {
-      default: {
-        outlined: {
-          sm: 'peer block w-full appearance-none rounded-lg border bg-transparent px-2.5 pb-2.5 pt-4 text-xs focus:outline-none focus:ring-0 border-gray-600 text-white focus:border-blue-500',
-          md: 'peer block w-full appearance-none rounded-lg border bg-transparent px-2.5 pb-2.5 pt-4 text-sm focus:outline-none focus:ring-0 border-gray-600 text-white focus:border-blue-500',
-        },
-      },
-    },
-  }
-  const modal: CustomFlowbiteTheme['modal'] = {
-    header: {
-      base: 'flex items-start justify-between rounded-t border-b p-5 border-gray-600',
-      title: 'text-xl font-medium text-white',
-    },
-    body: {
-      base: 'p-6 flex-1 overflow-auto',
-    },
-    footer: {
-      base: 'flex items-center justify-between space-x-2 rounded-b border-t border-gray-600 p-6',
-    },
-    content: {
-      base: 'relative h-full w-full p-4 md:h-auto',
-      inner:
-        'relative rounded-lg bg-gray-800 shadow flex flex-col max-h-[90vh]',
-    },
-  }
-
+  const modal = getTheme("profileSettings")
+  const button = getTheme("friendButton")
   return (
     <>
       <Modal
@@ -56,11 +28,11 @@ export function ProfileSettingsModal() {
                 className='hover:transition-opacity'
                 onClick={() => setUserPicture('')}
               >
-                <Avatar img={userPicture?.toString()} rounded />
+                <Avatar img={user?.picture?.toString()} rounded />
               </button>
               <div className='space-y-1 font-medium text-white'>
-                <div>{userName}</div>
-                <div className='text-sm text-gray-400'>{userEmail}</div>
+                <div>{user?.name}</div>
+                <div className='text-sm text-gray-400'>{user?.email}</div>
               </div>
             </div>
             <div>

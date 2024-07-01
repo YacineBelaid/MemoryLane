@@ -1,8 +1,8 @@
-import { FriendModal } from "./../components/FriendModal";
-import { ProfileSettingsModal } from "../components/ProfileSettingsModal";
+import { FriendModal } from "../components/Modals/FriendModal";
+import { ProfileSettingsModal } from "../components/Modals/ProfileSettingsModal";
 import Mosaic from "./..//components/Mosaic";
 import SpeedDial from "./../components/Speedial";
-import { CreateMemory } from "./../components/CreateMemory";
+import { CreateMemory } from "../components/Modals/CreateMemory";
 
 export function Dashboard() {
   return (

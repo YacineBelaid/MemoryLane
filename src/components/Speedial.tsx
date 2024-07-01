@@ -2,7 +2,7 @@ import { useState } from 'react'
 import useUserStore from './../store/useStore'
 export default function SpeedDial() {
   const [isOpen, setIsOpen] = useState(false)
-  const { openModal, setOpenModal,memoryModal, setMemoryModal  } = useUserStore()
+  const { openModal, setOpenModal,memoryModal, setMemoryModal} = useUserStore()
   return (
     <div
       className='fixed bottom-6 end-24 group z-50'

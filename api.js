@@ -1,104 +1,44 @@
-import express from 'express'
-import sqlite3 from 'sqlite3'
+import express from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import authRoutes from './backend/routes/authRoutes.js';
+import friendshipRoutes from './backend/routes/friendshipRoutes.js';
+import memoryRoutes from './backend/routes/memoryRoutes.js';
+import fileRoutes from './backend/routes/fileRoutes.js';
+import { initializeDatabase } from './backend/config/database.js';
+import cookieParser from 'cookie-parser';
 
-const app = express()
-const port = 4001
-const db = new sqlite3.Database('memories.db')
 
-app.use(express.json())
 
-db.serialize(() => {
-  db.run(`
-    CREATE TABLE IF NOT EXISTS memories (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT,
-      description TEXT,
-      timestamp DATE
-    )
-  `)
-})
+dotenv.config();
 
-app.get('/memories', (req, res) => {
-  db.all('SELECT * FROM memories', (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message })
-      return
-    }
-    res.json({ memories: rows })
-  })
-})
+const app = express();
+const port = 4001;
 
-app.post('/memories', (req, res) => {
-  const { name, description, timestamp } = req.body
+// Middleware
+app.use(cookieParser());
+app.use(express.json());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
 
-  if (!name || !description || !timestamp) {
-    res.status(400).json({
-      error: 'Please provide all fields: name, description, timestamp',
-    })
-    return
+// Routes
+app.use('/api', authRoutes);
+app.use('/api/friendships', friendshipRoutes);
+app.use('/api/memories', memoryRoutes);
+app.use('/api/files', fileRoutes);
+// Initialize database and start server
+async function startServer() {
+  try {
+    await initializeDatabase();
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
   }
+}
 
-  const stmt = db.prepare(
-    'INSERT INTO memories (name, description, timestamp) VALUES (?, ?, ?)'
-  )
-  stmt.run(name, description, timestamp, (err) => {
-    if (err) {
-      res.status(500).json({ error: err.message })
-      return
-    }
-    res.status(201).json({ message: 'Memory created successfully' })
-  })
-})
-
-app.get('/memories/:id', (req, res) => {
-  const { id } = req.params
-  db.get('SELECT * FROM memories WHERE id = ?', [id], (err, row) => {
-    if (err) {
-      res.status(500).json({ error: err.message })
-      return
-    }
-    if (!row) {
-      res.status(404).json({ error: 'Memory not found' })
-      return
-    }
-    res.json({ memory: row })
-  })
-})
-
-app.put('/memories/:id', (req, res) => {
-  const { id } = req.params
-  const { name, description, timestamp } = req.body
-
-  if (!name || !description || !timestamp) {
-    res.status(400).json({
-      error: 'Please provide all fields: name, description, timestamp',
-    })
-    return
-  }
-
-  const stmt = db.prepare(
-    'UPDATE memories SET name = ?, description = ?, timestamp = ? WHERE id = ?'
-  )
-  stmt.run(name, description, timestamp, id, (err) => {
-    if (err) {
-      res.status(500).json({ error: err.message })
-      return
-    }
-    res.json({ message: 'Memory updated successfully' })
-  })
-})
-
-app.delete('/memories/:id', (req, res) => {
-  const { id } = req.params
-  db.run('DELETE FROM memories WHERE id = ?', [id], (err) => {
-    if (err) {
-      res.status(500).json({ error: err.message })
-      return
-    }
-    res.json({ message: 'Memory deleted successfully' })
-  })
-})
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`)
-})
+startServer();
