@@ -89,12 +89,12 @@ export default function Mosaic({ maxHeight = '80vh' }) {
         </select>
       </div>
       <div
-        className='relative isolate pb-8 pt-8 sm:pt-12 Flipped'
+        className='relative isolate pb-8 pt-2 sm:pt-12 Flipped'
         style={{ maxHeight, overflow: 'hidden' }}
       >
         <div
           className='overflow-y-auto relative'
-          style={{ maxHeight: `calc(${maxHeight} - 3rem)` }}
+          style={{ maxHeight: `calc(${maxHeight} - 8rem)` }}
         >
           <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
             <div className='mx-auto max-w-xl text-center mb-8'>
