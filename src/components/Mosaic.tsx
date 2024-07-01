@@ -1,14 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { getMemories } from './../services/memory.service'
 import { Memory, SortBy, QueryType } from '@/interfaces/memory.inteface'
 import { MemoryCard } from './MemoryCard'
 import useUserStore from './../store/useStore'
 import { MemoryDelete } from './Modals/MemoryDeleteModal'
-import { Button, Select } from 'flowbite-react'
+import { Button } from 'flowbite-react'
 import { buttonSelect } from './../theme/buttonGroups'
 import { button } from './../theme/button'
-import {sortByTheme} from './../theme/seleect'
 function getOrdinalSuffix(day: number) {
   if (day > 3 && day < 21) return 'th'
   switch (day % 10) {
@@ -32,33 +31,19 @@ function formatDate(date: Date) {
 }
 
 export default function Mosaic({ maxHeight = '80vh' }) {
-  const [currentDate, setCurrentDate] = useState<string>('')
-  const [scrollPercentage, setScrollPercentage] = useState(0)
-  const [isScrolling, setIsScrolling] = useState(false)
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const scrollTimeoutRef = useRef<number | null>(null)
   const [queryType, setQueryType] = useState<QueryType>('public')
-  const [sortBy, setsortBy] = useState<SortBy>('latest')
+  const [sortBy, setSortBy] = useState<SortBy>('latest')
   const {
     data: memories,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['memories', queryType],
-    queryFn: () => getMemories({ queryType }),
+    queryKey: ['memories', queryType, sortBy],
+    queryFn: () => getMemories({ queryType, sortBy }),
   })
 
   const { user } = useUserStore()
 
-  const getDateIndicatorPosition = () => {
-    const minPosition = 15
-    const maxPosition = 85
-    const calculatedPosition = scrollPercentage * 100
-    return `${Math.min(
-      Math.max(calculatedPosition, minPosition),
-      maxPosition
-    )}%`
-  }
   if (isLoading) return <div>Loading...</div>
   if (error) return <div>Error: {(error as Error).message}</div>
   return (
@@ -92,11 +77,15 @@ export default function Mosaic({ maxHeight = '80vh' }) {
         </Button.Group>
       </div>
       <div className='flex flex-wrap gap-2 pt-3 justify-center items-center w-full text-gray-300'>
-        <select id='sortBy' className='"border border-transparent   border-gray-700 bg-gray-800 focus:ring-gray-800 enabled:hover:bg-gray-700"'>
-          <option className='"border border-transparent   border-gray-700 bg-gray-800 focus:ring-gray-800 enabled:hover:bg-gray-700"'>Latest post</option>
-          <option className="border border-transparent   border-gray-700 bg-gray-800 focus:ring-gray-800 enabled:hover:bg-gray-700">Oldest post</option>
-          <option className="border border-transparent   border-gray-700 bg-gray-800 focus:ring-gray-800 enabled:hover:bg-gray-700">Latest memory</option>
-          <option className="border border-transparent   border-gray-700 bg-gray-800 focus:ring-gray-800 enabled:hover:bg-gray-700">Oldest memory</option>
+        <select 
+          className='"border border-transparent border-gray-700 bg-gray-800 focus:ring-gray-800 enabled:hover:bg-gray-700"'
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value as SortBy)}
+        >
+          <option value="latest" className='"border border-transparent   border-gray-700 bg-gray-800 focus:ring-gray-800 enabled:hover:bg-gray-700"'>Latest post</option>
+          <option value="oldest" className="border border-transparent   border-gray-700 bg-gray-800 focus:ring-gray-800 enabled:hover:bg-gray-700">Oldest post</option>
+          <option value="latest_date" className="border border-transparent   border-gray-700 bg-gray-800 focus:ring-gray-800 enabled:hover:bg-gray-700">Latest memory</option>
+          <option value="oldest_date" className="border border-transparent   border-gray-700 bg-gray-800 focus:ring-gray-800 enabled:hover:bg-gray-700">Oldest memory</option>
         </select>
       </div>
       <div
@@ -104,7 +93,6 @@ export default function Mosaic({ maxHeight = '80vh' }) {
         style={{ maxHeight, overflow: 'hidden' }}
       >
         <div
-          ref={scrollContainerRef}
           className='overflow-y-auto relative'
           style={{ maxHeight: `calc(${maxHeight} - 3rem)` }}
         >
@@ -132,19 +120,6 @@ export default function Mosaic({ maxHeight = '80vh' }) {
             </div>
           </div>
         </div>
-
-        {isScrolling && (
-          <div
-            className='absolute left-0 bg-gray-800 text-white px-3 py-1 rounded-r-full transform -translate-y-1/2 z-10 transition-opacity duration-300'
-            style={{
-              top: getDateIndicatorPosition(),
-              left: '2px',
-              opacity: isScrolling ? 1 : 0,
-            }}
-          >
-            {currentDate}
-          </div>
-        )}
         <MemoryDelete />
       </div>
     </>
