@@ -8,7 +8,7 @@ As a first iteration for this solution, we want to build a web application that 
 
 ## Instructions
 
-You need a gmail account tu test this app. Ideally to test all functionalities, you should have two Gmail Accounts, open one private and one public browsing tab conenct your gmail account to each tab respectively and test the app on both accounts.
+You need a gmail account to test this app. Ideally to test all functionalities, you should have two Gmail Accounts, open one private and one public browsing tab conenct your gmail account to each tab respectively and test the app on both accounts.
 
 1. Fill up the env value with your own (or the one I shared by email)
 2.  Open a terminal
@@ -74,7 +74,7 @@ Cloud Apps, Buckets, Credentials, Users and policies will be removed in 2 weeks.
 
 ### Futur improvements
 
-Few things left on the backlog :
+After a first iteration few things were left on the backlog about performance, authentication and social features :
 - Having the Landing page served through SSR or even SSG by building and placing the static assets in a CDN such as Cloudfront. It will better SEO and performance.
 - Having Multiple Stores instead of one large one. Decoupling and increasing coherence.
 - Reducing the amount of Modals giving a clear user path.
