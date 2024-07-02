@@ -73,6 +73,20 @@ I also created a simple CORS policy for the S33 Bucket
 ```
 Cloud Apps, Buckets, Credentials, Users and policies will be removed in 2 weeks.
 
+### Futur improvements
+During development I had to make choices in order to have a first solid iteration.
+Here are a few things that I left on the backlog :
+- Having the Landing page served through SSR or even SSG by placing it in a CDN such as Cloudfront. It will better SEO and performance.
+- Having Multiple Stores instead of one large one. Decoupling and increasing coherence.
+- Reducing the amount of Modals giving a clear user path.
+- Developing features to enhance profile personnalisation such as uploading a new profile picture, changing your name, adding a personal description etc ...
+- Let user visit their friends feed.
+- Adding new ways to log in (email + password and 2FA, Apple Oauth, Facebook Oauth)
+- Developing sharing features such as Friend tagging using the memory_participant table.
+- Adding versioning for picture uploading on S3 bucket. this would allow to have multiple version of a file.
+- Adding comments and reactions.
+- Having multiple picture per memory.
+- Adding a favicon
 ### Author
 Yacine Belaid
 For any inquiry contact me : yacine.bld.belaid@gmail.com
