@@ -32,6 +32,47 @@ GMAIL ACCOUNT REQUIRED
 -Google Oauth
 -JWT stored in cookies (HTTP only)
 
+## Extra
+- I created a google App in order to have Google Oauth running with scopes and credentials
+- I've created an S3 bucket in order to get a scalable and secure way to upload pictures. I had to create a specific IAM user using this role policy :
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:ListBucket",
+                "s3:DeleteObject",
+                "s3:PutObjectTagging"
+            ],
+            "Resource": [
+                "arn:aws:s3:::thememorylane",
+                "arn:aws:s3:::thememorylane/*"
+            ]
+        }
+    ]
+}
+```
+I also created a simple CORS policy for the S33 Bucket
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "PublicReadGetObject",
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::thememorylane/*"
+        }
+    ]
+}
+```
+Cloud Apps, Buckets, Credentials, Users and policies will be removed in 2 weeks.
+
 ### Author
 Yacine Belaid
 For any inquiry contact me : yacine.bld.belaid@gmail.com
