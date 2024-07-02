@@ -11,7 +11,8 @@ import {
   Button,
 } from 'flowbite-react'
 import { ChangeEvent, useState, useEffect } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
+import {queryClient} from './../../services/utils/fetch.utils'
 import { createMemory, editMemory } from './../../services/memory.service'
 import { CreateMemoryData } from '@/interfaces/memory.inteface'
 import {createMemoryTheme,} from './../../theme/modal'
@@ -31,7 +32,6 @@ export function CreateMemory() {
   const [file, setFile] = useState<File | null>(null)
   const [isEditing, setIsEditing] = useState(false)
 
-  const queryClient = useQueryClient()
 
   useEffect(() => {
     if (memoryToEdit) {

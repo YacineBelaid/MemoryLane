@@ -15,6 +15,7 @@ import {
   usePendingFriendships,
   useHandleFriendshipAction,
 } from '../../services/friend.service'
+import { queryClient } from '../../services/utils/fetch.utils'
 
 export function FriendModal() {
   const {
@@ -32,7 +33,10 @@ export function FriendModal() {
   const [friendInput, setFriendInput] = useState('')
 
   const handleFriendshipActionMutation = useHandleFriendshipAction({
-    onSuccess: () => {},
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['friends'] });
+     queryClient.invalidateQueries({ queryKey: ['pendingFriendships'] });
+    },
     onError: (error) => {
       console.error('Failed to handle friendship action:', error)
     },
@@ -43,13 +47,14 @@ export function FriendModal() {
     friendId: string,
     action: 'confirm' | 'reject'
   ) => {
-    console.log("Friendship:",userId,friendId)
     handleFriendshipActionMutation.mutate({ userId, friendId, action })
   }
 
   const inviteFriendMutation = useInviteFriend({
     onSuccess: () => {
       setFriendInput('')
+      queryClient.invalidateQueries({ queryKey: ['friends'] });
+    queryClient.invalidateQueries({ queryKey: ['pendingFriendships'] });
     },
     onError: (error) => {
       console.error('Failed to invite friend:', error)
@@ -58,7 +63,6 @@ export function FriendModal() {
 
   const handleInviteFriend = () => {
     if (friendInput.trim()) {
-      console.log('Inviting friend:', friendInput.trim())
       inviteFriendMutation.mutate(friendInput.trim())
     } else {
       console.error('Friend input is empty')
@@ -101,6 +105,7 @@ export function FriendModal() {
                   </div>
                   <div className='flex flex-wrap gap-1'>
                     <Button
+                    className='mr-5 text-white bg-green-600'
                       onClick={handleInviteFriend}
                       disabled={inviteFriendMutation.isLoading}
                     >
@@ -109,17 +114,7 @@ export function FriendModal() {
                         : 'Send Invitation'}
                     </Button>
                   </div>
-                  {inviteFriendMutation.isSuccess && (
-                    <p className='text-green-500'>
-                      Invitation sent successfully!
-                    </p>
-                  )}
-                  {inviteFriendMutation.isError && (
-                    <p className='text-red-500'>
-                      Failed to send invitation:{' '}
-                      {inviteFriendMutation.error?.message || 'Unknown error'}
-                    </p>
-                  )}
+
                 </div>
               </Modal.Body>
             </Tabs.Item>

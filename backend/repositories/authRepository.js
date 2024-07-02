@@ -57,7 +57,6 @@ export const getUserById = (id) => {
 };
 
 export const getUserByEmail = (email) => {
-  console.log(email);
   return new Promise((resolve, reject) => {
     db.get('SELECT * FROM users WHERE email = ?', [email], (err, row) => {
       if (err) {

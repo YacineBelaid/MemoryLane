@@ -17,13 +17,11 @@ export const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(request => {
-  console.log('Starting Request')
   return request
 })
 
 axiosInstance.interceptors.response.use(
   response => {
-    console.log('Response:');
     return response;
   },
   error => {

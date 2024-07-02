@@ -30,8 +30,6 @@ import {
     const { friendEmail } = req.query;
     const userId = req.userId;
   
-    console.log('Received friend invitation request:', { userId, friendEmail });
-  
     if (!friendEmail) {
       console.error('Friend email is missing');
       return res.status(400).json({ error: 'Friend email is required' });
@@ -56,17 +54,14 @@ import {
   
   
   export const handleFriendshipActionController = async (req, res) => {
-    console.log('Received request body:', req.body);
     const { userId, friendId, action } = req.body;
     const currentUserId = String(req.userId); 
-    console.log('Received friendship action request:', { currentUserId, userId, friendId, action });
   
     if (!userId || !friendId || !action) {
       return res.status(400).json({ error: 'User ID, friend ID, and action are required' });
     }
  
     if (currentUserId.trim() !== friendId.trim()) {
-      console.log()
       return res.status(403).json({ error: 'You do not have permission to modify this friendship' });
     }
   

@@ -94,19 +94,24 @@ export const getMemories = (
   return new Promise((resolve, reject) => {
     let query, params, orderClause, dateClause
 
-    switch (sortBy) {
-      case 'latest':
-        orderClause = 'ORDER BY m.timestamp DESC'
-        break
-      case 'oldest':
-        orderClause = 'ORDER BY m.timestamp ASC'
-        break
-      case 'alphabetical':
-        orderClause = 'ORDER BY m.name ASC'
-        break
-      default:
-        orderClause = 'ORDER BY m.timestamp DESC'
-    }
+    // Sorting logic
+switch (sortBy) {
+  case 'latest':
+    orderClause = 'ORDER BY m.timestamp DESC';
+    break;
+  case 'oldest':
+    orderClause = 'ORDER BY m.timestamp ASC';
+    break;
+  case 'latest_date':
+    orderClause = 'ORDER BY m.created_at DESC, m.timestamp DESC';
+    break;
+  case 'oldest_date':
+    orderClause = 'ORDER BY m.created_at ASC, m.timestamp ASC';
+    break;
+  default:
+    orderClause = 'ORDER BY m.timestamp DESC';
+}
+
 
     if (lastFetchedDate) {
       dateClause =

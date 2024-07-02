@@ -5,7 +5,6 @@ const API_URL = import.meta.env.VITE_API_URL
 const getAllFriends = async (): Promise<Friend[]> => {
     try {
       const data = await fetchWithCredentials(`${API_URL}/friendships/confirmed`);
-      console.log('Received friends data:', data);
       return data.confirmedFriendships || [];
     } catch (error) {
       console.error('Error fetching friends:', error);
@@ -28,13 +27,11 @@ const getAllFriends = async (): Promise<Friend[]> => {
 
 
 const inviteFriend = async (friendEmail: string): Promise<{ message: string }> => {
-  console.log('Sending friend invitation to:', friendEmail);
   try {
     const response = await fetchWithCredentials(`${API_URL}/friendships/invitation?friendEmail=${encodeURIComponent(friendEmail)}`, {
       method: 'POST',
       body: undefined,
     });
-    console.log('Friend invitation response:', response);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -58,7 +55,6 @@ export const useInviteFriend = (
 const getPendingFriendships = async (): Promise<PendingFriendship[]> => {
   try {
     const data = await fetchWithCredentials(`${API_URL}/friendships/pending`);
-    console.log('Received pending friendships data:', data);
     return data.pendingFriendships.map((friendship: { user_id: string; friend_id: string; }) => ({
       userId: friendship.user_id,
       friendId: friendship.friend_id,
@@ -85,7 +81,6 @@ export const usePendingFriendships = (
   export const useHandleFriendshipAction = (
     options?: Omit<UseMutationOptions<{ message: string }, Error, { userId: string; friendId: string; action: 'confirm' | 'reject' }>, 'mutationFn'>
   ) => {
-    console.log("options :",options)
     return useMutation({
       mutationFn: ({ userId, friendId, action }) => 
         fetchWithCredentials(`${API_URL}/friendships`, {

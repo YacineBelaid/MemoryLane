@@ -4,8 +4,8 @@ import { Avatar, Dropdown, Navbar } from 'flowbite-react'
 import useUserStore from './../store/useStore'
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google'
 import { useLoginWithGoogle } from '../services/auth'
-import { getTheme } from '../theme/themeUtils';
-
+import {NavbarTheme} from './../theme/navbar'
+import {DropdownTheme} from './../theme/dropdown'
 export function Navigation() {
   const { 
     user,
@@ -31,8 +31,6 @@ export function Navigation() {
       console.log('Login Failed: No credential received');
     }
   }
-  const NavbarTheme = getTheme("NavbarTheme")
-  const DropdownTheme = getTheme("DropdownTheme")
   return (
     <Navbar theme={NavbarTheme}>
       <Navbar.Brand href='https://flowbite-react.com'>
