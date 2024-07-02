@@ -85,7 +85,7 @@ Here are a few things that I left on the backlog :
 - Developing sharing features such as Friend tagging using the memory_participant table.
 - Adding versioning for picture uploading on S3 bucket. this would allow to have multiple version of a file.
 - Adding comments and reactions.
-- Having multiple picture per memory.
+- Having multiple pictures per memory.
 - Adding a favicon
 ### Author
 Yacine Belaid
