@@ -86,6 +86,10 @@ Here are a few things that I left on the backlog :
 - Adding versioning for picture uploading on S3 bucket. this would allow to have multiple version of a file.
 - Adding comments and reactions.
 - Having multiple pictures per memory.
+- Invalidate friend request and deletion queries
+- Having an elastic dynamic search through users profile while searching for friends
+- Notification system
+- Account Recovery
 - Adding a favicon
 ### Author
 Yacine Belaid
