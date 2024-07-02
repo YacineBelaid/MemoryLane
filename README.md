@@ -8,7 +8,7 @@ As a first iteration for this solution, we want to build a web application that 
 
 ## Instructions
 
-GMAIL ACCOUNT REQUIRED
+You need a gmail account tu test this app. Ideally to test all functionalities, you should have two Gmail Accounts, open one private and one public browsing tab conenct your gmail account to each tab respectively and test the app on both accounts.
 
 - Fill up the env value with your own (or the one I shared by email)
 -  Open a terminal
@@ -16,8 +16,7 @@ GMAIL ACCOUNT REQUIRED
 - `npm run dev`.
 - Open a second terminal
 - `npm run serve:api`.
-- Enjoy ! Ideally to test all functionalities, you should have two Gmail Accounts, open one private and one public broswing tab conenct your gmail account to each tab respectively and test the app on both accounts.
-
+- Enjoy ! 
 ### Technologies
 - React 
 - Node
@@ -33,8 +32,7 @@ GMAIL ACCOUNT REQUIRED
 - JWT stored in cookies (HTTP only)
 
 ## Extra
-- I created a google App in order to have Google Oauth running with scopes and credentials
-- I've created an S3 bucket in order to get a scalable and secure way to upload pictures. I had to create a specific IAM user using this role policy :
+ I created a google App in order to have Google Oauth running with scopes and credentials In order to have a scalable and secure way to upload pictures I also created an S3 bucket. I had to create a specific IAM user using this role policy :
 ```
 {
     "Version": "2012-10-17",
@@ -56,7 +54,7 @@ GMAIL ACCOUNT REQUIRED
     ]
 }
 ```
-I also created a simple CORS policy for the S33 Bucket
+I also created a simple CORS policy for the S3 Bucket
 ```
 {
     "Version": "2012-10-17",
