@@ -74,7 +74,7 @@ Cloud Apps, Buckets, Credentials, Users and policies will be removed in 2 weeks.
 
 ### Futur improvements
 
-Few things I left on the backlog :
+Few things left on the backlog :
 - Having the Landing page served through SSR or even SSG by building and placing the static assets in a CDN such as Cloudfront. It will better SEO and performance.
 - Having Multiple Stores instead of one large one. Decoupling and increasing coherence.
 - Reducing the amount of Modals giving a clear user path.
