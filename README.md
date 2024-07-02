@@ -19,18 +19,18 @@ GMAIL ACCOUNT REQUIRED
 - Enjoy ! Ideally to test all functionalities, you should have two Gmail Accounts, open one private and one public broswing tab conenct your gmail account to each tab respectively and test the app on both accounts.
 
 ### Technologies
--React 
--Node
--typescript and javascript ES6
--React query (Hooks and QueryClient)
--Axios
--Zustand
--Sqlite
--Express
--Tailwind + Flowbite
--AWS S3 Bucket with pre-signed URL
--Google Oauth
--JWT stored in cookies (HTTP only)
+- React 
+- Node
+- typescript and javascript ES6
+- React query (Hooks and QueryClient)
+- Axios
+- Zustand
+- Sqlite
+- Express
+- Tailwind + Flowbite
+- AWS S3 Bucket with pre-signed URL
+- Google Oauth (use Tap)
+- JWT stored in cookies (HTTP only)
 
 ## Extra
 - I created a google App in order to have Google Oauth running with scopes and credentials
