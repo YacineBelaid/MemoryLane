@@ -33,7 +33,8 @@ You need a gmail account to test this app. Ideally to test all functionalities, 
 - JWT stored in cookies (HTTP only)
 
 ## Extra
- I created a google App in order to have Google Oauth running with scopes and credentials In order to have a scalable and secure way to upload pictures I also created an S3 bucket. I had to create a specific IAM user using this role policy :
+ A google App has been configured with scopes and credential in order to have Google Oauth running
+ In order to have a scalable and secure way to upload pictures, an S3 bucket has been created along a specific IAM user using this role policy :
 ```
 {
     "Version": "2012-10-17",
