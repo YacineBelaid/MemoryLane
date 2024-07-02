@@ -10,13 +10,14 @@ As a first iteration for this solution, we want to build a web application that 
 
 You need a gmail account tu test this app. Ideally to test all functionalities, you should have two Gmail Accounts, open one private and one public browsing tab conenct your gmail account to each tab respectively and test the app on both accounts.
 
-- Fill up the env value with your own (or the one I shared by email)
--  Open a terminal
--  `npm i`.
-- `npm run dev`.
-- Open a second terminal
-- `npm run serve:api`.
-- Enjoy ! 
+1/ Fill up the env value with your own (or the one I shared by email)
+2/  Open a terminal
+3/ `npm i`.
+4/- `npm run dev`.
+5/ Open a second terminal
+6/ `npm run serve:api`.
+7/ Enjoy ! 
+
 ### Technologies
 - React 
 - Node
