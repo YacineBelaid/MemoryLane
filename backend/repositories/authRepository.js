@@ -57,13 +57,17 @@ export const getUserById = (id) => {
 };
 
 export const getUserByEmail = (email) => {
+  console.log(email);
   return new Promise((resolve, reject) => {
     db.get('SELECT * FROM users WHERE email = ?', [email], (err, row) => {
       if (err) {
+        console.error('Database error while finding user:', err);
         reject(err);
       } else if (!row) {
+        console.error(email + " Is not a registered email on MemoryLane", err);
         resolve(null);
       } else {
+        console.error(email + "Found !" + row);
         resolve(row);
       }
     });

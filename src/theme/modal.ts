@@ -1,6 +1,6 @@
 import { CustomFlowbiteTheme } from 'flowbite-react';
 
-export const createMemory: CustomFlowbiteTheme['modal'] = {
+export const createMemoryTheme: CustomFlowbiteTheme['modal'] = {
   header: {
     base: "flex items-start justify-between rounded-t border-b p-5 border-gray-600",
     title: "text-xl font-medium text-white"
@@ -16,7 +16,7 @@ export const createMemory: CustomFlowbiteTheme['modal'] = {
     inner: "relative rounded-lg bg-gray-800 shadow flex flex-col max-h-[90vh]",
   }
 };
-export const friendModal: CustomFlowbiteTheme['modal'] = {
+export const friendModalTheme: CustomFlowbiteTheme['modal'] = {
     header: {
       base: "flex items-start justify-between rounded-t border-b p-5 border-gray-600",
       title: "text-xl font-medium text-white"
@@ -33,7 +33,7 @@ export const friendModal: CustomFlowbiteTheme['modal'] = {
     }
   };
 
-  export const profileSettings: CustomFlowbiteTheme['modal'] = {
+  export const profileSettingsTheme: CustomFlowbiteTheme['modal'] = {
     header: {
       base: 'flex items-start justify-between rounded-t border-b p-5 border-gray-600',
       title: 'text-xl font-medium text-white',

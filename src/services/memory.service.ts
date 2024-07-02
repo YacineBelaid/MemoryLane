@@ -119,6 +119,7 @@ export async function getMemories({
         },
       });
     } else {
+
       return fetchWithCredentials(`${API_URL}/memories/${data.id}`, {
         method: 'PUT',
         body: baseBody,

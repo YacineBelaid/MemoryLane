@@ -6,7 +6,6 @@ import {
   getUserById,
   getUserByEmail,
   getUserPictureAndNameByEmail,
-  getUserPictureAndNameById,
  } from '../repositories/authRepository.js';
 import dotenv from 'dotenv'
 

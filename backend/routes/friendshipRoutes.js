@@ -12,6 +12,6 @@ const router = express.Router();
 router.get('/confirmed', verifyToken, getConfirmedFriendshipsController);
 router.get('/pending', verifyToken, getPendingFriendshipsController);
 router.post('/invitation', verifyToken, sendFriendshipInvitationController);
-router.put('/:friendshipId', verifyToken, handleFriendshipActionController);
+router.put('/', verifyToken, handleFriendshipActionController);
 
 export default router;

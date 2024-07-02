@@ -1,6 +1,6 @@
 import { CustomFlowbiteTheme } from "flowbite-react";
 
-export const fullWidth: CustomFlowbiteTheme['tabs'] ={
+export const fullWidthTabsTheme: CustomFlowbiteTheme['tabs'] ={
     "base": "flex flex-col gap-2",
     "tablist": {
       "base": "flex text-center",

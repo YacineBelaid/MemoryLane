@@ -5,21 +5,18 @@ import {
   FloatingLabel,
   Modal,
   Checkbox,
-  TextInput,
   Datepicker,
   FileInput,
   Label,
   Button,
 } from 'flowbite-react'
 import { ChangeEvent, useState, useEffect } from 'react'
-import { getTheme } from '../../theme/themeUtils'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createMemory, editMemory } from './../../services/memory.service'
 import { CreateMemoryData } from '@/interfaces/memory.inteface'
-
+import {createMemoryTheme,} from './../../theme/modal'
+import {floatingLabelTheme} from './../../theme/floatingLabels' 
 export function CreateMemory() {
-  const modal = getTheme('createMemory')
-  const floatingLabel = getTheme('floatingLabel')
   const { memoryModal, setMemoryModal, memoryToEdit, setMemoryToEdit } =
     useUserStore()
 
@@ -141,7 +138,7 @@ export function CreateMemory() {
 
   return (
     <Modal
-      theme={modal}
+      theme={createMemoryTheme}
       show={memoryModal}
       onClose={() => {
         setMemoryModal(false)
@@ -238,7 +235,7 @@ export function CreateMemory() {
           />
 
           <FloatingLabel
-            theme={floatingLabel}
+            theme={floatingLabelTheme}
             variant='filled'
             label='Title (not exceeding 50 characters)'
             helperText='Give a title to your memory'
@@ -278,14 +275,6 @@ export function CreateMemory() {
               Make this memory public
             </Label>
           </div>
-          <TextInput
-            id='friendNames'
-            type='text'
-            placeholder='Tag some friends (comma-separated)'
-            value={friendNames}
-            onChange={(e) => setFriendNames(e.target.value)}
-            sizing={'sm'}
-          />
         </div>
       </Modal.Body>
       <Modal.Footer className='flex justify-end'>
