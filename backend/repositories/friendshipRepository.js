@@ -50,43 +50,74 @@ export const getPendingFriendships = (userId) => {
 };
 
 
-
-
-
 export const createFriendshipInvitation = (userId, friendId) => {
   return new Promise((resolve, reject) => {
     if (!userId || !friendId) {
       return reject(new Error('Both userId and friendId are required'));
     }
 
-    // Check if friendship already exists
-    db.get(
-      'SELECT * FROM friendships WHERE (user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)',
-      [userId, friendId, friendId, userId],
-      (err, row) => {
-        if (err) {
-          console.error('Database error in createFriendshipInvitation:', err);
-          return reject(new Error('Database error while checking existing friendship'));
-        }
-        
-        if (row) {
-          return reject(new Error('Friendship already exists'));
-        }
+    db.serialize(() => {
+      db.run('BEGIN TRANSACTION');
 
-        // If no existing friendship, create a new one
-        const stmt = db.prepare(
-          'INSERT INTO friendships (user_id, friend_id, status) VALUES (?, ?, ?)'
-        );
-        stmt.run(userId, friendId, 'pending', (err) => {
+      // Check if both users exist
+      db.get(
+        'SELECT COUNT(*) as count FROM users WHERE id IN (?, ?)',
+        [userId, friendId],
+        (err, row) => {
           if (err) {
-            console.error('Database error in createFriendshipInvitation:', err);
-            reject(new Error('Database error while creating friendship invitation'));
-          } else {
-            resolve();
+            console.error('Database error while checking user existence:', err);
+            db.run('ROLLBACK');
+            return reject(new Error('Database error while checking user existence'));
           }
-        });
-      }
-    );
+
+          if (row.count !== 2) {
+            db.run('ROLLBACK');
+            return reject(new Error('One or both users do not exist'));
+          }
+
+          // Check if friendship already exists
+          db.get(
+            'SELECT * FROM friendships WHERE (user_id = ? AND friend_id = ?) OR (user_id = ? AND friend_id = ?)',
+            [userId, friendId, friendId, userId],
+            (err, row) => {
+              if (err) {
+                console.error('Database error while checking existing friendship:', err);
+                db.run('ROLLBACK');
+                return reject(new Error('Database error while checking existing friendship'));
+              }
+              
+              if (row) {
+                db.run('ROLLBACK');
+                return reject(new Error('Friendship already exists'));
+              }
+
+              // Create new friendship invitation
+              db.run(
+                'INSERT INTO friendships (user_id, friend_id, status) VALUES (?, ?, ?)',
+                [userId, friendId, 'pending'],
+                (err) => {
+                  if (err) {
+                    console.error('Database error while creating friendship invitation:', err);
+                    db.run('ROLLBACK');
+                    return reject(new Error('Database error while creating friendship invitation'));
+                  }
+
+                  db.run('COMMIT', (err) => {
+                    if (err) {
+                      console.error('Error committing transaction:', err);
+                      db.run('ROLLBACK');
+                      reject(new Error('Database error while creating friendship invitation'));
+                    } else {
+                      resolve({ message: 'Friendship invitation created successfully' });
+                    }
+                  });
+                }
+              );
+            }
+          );
+        }
+      );
+    });
   });
 };
 

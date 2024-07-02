@@ -223,23 +223,23 @@ switch (sortBy) {
           : [userId, limit]
         break
 
-      case 'friend_all_feed':
-        // All memories (public and private) of the user and all their friends
-        query = `
-          SELECT DISTINCT m.*, u.name as authorName, u.picture_link as authorPicture
-          FROM memories m
-          JOIN users u ON m.user_id = u.id
-          LEFT JOIN friendships f ON (f.user_id = ? AND f.friend_id = m.user_id) OR (f.friend_id = ? AND f.user_id = m.user_id)
-          WHERE m.user_id = ?
-            OR (f.status = 'confirmed')
-          ${dateClause}
-          ${orderClause}
-          LIMIT ?
-        `
-        params = lastFetchedDate
-          ? [userId, userId, userId, lastFetchedDate, limit]
-          : [userId, userId, userId, limit]
-        break
+        case 'friend_all_feed':
+          // All memories (public and private) of the user and all their friends
+          query = `
+            SELECT DISTINCT m.*, u.name as authorName, u.picture_link as authorPicture
+            FROM memories m
+            JOIN users u ON m.user_id = u.id
+            LEFT JOIN friendships f ON (f.user_id = ? AND f.friend_id = m.user_id) OR (f.friend_id = ? AND f.user_id = m.user_id)
+            WHERE m.user_id = ?
+              OR (f.status = 'confirmed' AND (f.user_id = ? OR f.friend_id = ?))
+            ${dateClause}
+            ${orderClause}
+            LIMIT ?
+          `
+          params = lastFetchedDate
+            ? [userId, userId, userId, userId, userId, lastFetchedDate, limit]
+            : [userId, userId, userId, userId, userId, limit]
+          break        
 
       default:
         return reject(new Error('Invalid query type'))
