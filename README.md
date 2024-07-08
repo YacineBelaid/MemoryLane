@@ -66,7 +66,7 @@ I also created a simple CORS policy for the S3 Bucket
             "Effect": "Allow",
             "Principal": "*",
             "Action": "s3:GetObject",
-            "Resource": "arn:aws:s3:::thememorylane/*"
+            "Resource": "arn:aws:s3:::BucketName/*"
         }
     ]
 }
