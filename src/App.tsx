@@ -1,22 +1,30 @@
-import { CubeIcon } from '@heroicons/react/20/solid'
+import { useEffect } from 'react'
 import './App.css'
+import Home from './pages/Home'
+import { Navigation } from './components/Navigation'
+import { Flowbite } from 'flowbite-react'
+import { Dashboard } from './pages/Dashboard'
+import useUserStore from './store/useStore'
 
 function App() {
+  const { isAuthenticated, setIsAuthenticated, user } = useUserStore()
+
+  useEffect(() => {
+    const userData = user
+    if (userData) {
+      setIsAuthenticated(true)
+    } else {
+      setIsAuthenticated(false)
+    }
+  }, [setIsAuthenticated,user])
+
   return (
-    <div>
-      <div className='mx-auto max-w-7xl sm:px-6 lg:px-8 mt-32'>
-        <div className='overflow-hidden rounded-lg bg-white shadow h-96'>
-          <div className='px-4 py-5 sm:p-6'>
-            <div className='flex items-center'>
-              <CubeIcon className='h-16 w-16 inline-block' />
-              <h1 className='text-4xl font-semibold text-gray-900 mb-4 ml-4 mt-4'>
-                Memory lane
-              </h1>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Flowbite>
+      <section className='h-screen overflow-y-hidden bg-gradient-to-r from-[#141E30] from-200% via-blue-950 via-30% to-[#243B55] to-90% '>
+        <Navigation />
+        {isAuthenticated ? <Dashboard /> : <Home />}
+      </section>
+    </Flowbite>
   )
 }
 
