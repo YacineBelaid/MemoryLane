@@ -49,8 +49,8 @@ You need a gmail account to test this app. Ideally to test all functionalities, 
                 "s3:PutObjectTagging"
             ],
             "Resource": [
-                "arn:aws:s3:::thememorylane",
-                "arn:aws:s3:::thememorylane/*"
+                "arn:aws:s3:::BucketName",
+                "arn:aws:s3:::BucketName/*"
             ]
         }
     ]
